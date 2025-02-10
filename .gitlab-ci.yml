@@ -9,7 +9,11 @@ variables:
 before_script:
   - apt-get update && apt-get install -y unzip
   - curl -sSLO "https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip"
-  - unzip -o terraform_1.6.0_linux_amd64.zip && mv terraform /usr/local/bin/
+  - ls -ld /usr/local/bin/terraform
+  - rm -rf /usr/local/bin/terraform
+  - unzip -o terraform_1.6.0_linux_amd64.zip 
+  - mv terraform /usr/local/bin/
+  - chmod +x /usr/local/bin/terraform
   - terraform --version
 
 init:
