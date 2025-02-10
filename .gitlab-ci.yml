@@ -1,0 +1,37 @@
+stages:
+  - init
+  - plan
+  - apply
+
+variables:
+  TF_ROOT: "terraform"
+
+before_script:
+  - apt-get update && apt-get install -y unzip
+  - curl -sSLO "https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip"
+  - unzip terraform_1.6.0_linux_amd64.zip && mv terraform /usr/local/bin/
+  - terraform --version
+
+init:
+  stage: init
+  script:
+    - cd $TF_ROOT
+    - terraform init
+
+plan:
+  stage: plan
+  script:
+    - cd $TF_ROOT
+    - terraform plan
+  only:
+    - merge_requests
+    - branches
+
+apply:
+  stage: apply
+  script:
+    - cd $TF_ROOT
+    - terraform apply -auto-approve
+  only:
+    - main
+  when: manual
