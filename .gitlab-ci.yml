@@ -18,13 +18,13 @@ before_script:
 init:
   stage: init
   script:
-    # - cd $TF_ROOT
+    #- cd $TF_ROOT
     - terraform init
   artifacts:
     paths:
       - .terraform/   # Persist Terraform working directory
       - terraform.tfstate  # Save Terraform state
-      - *.tf   # Include Terraform configuration files
+      - "*.tf"   # Include Terraform configuration files
     expire_in: 1h
 
 plan:
