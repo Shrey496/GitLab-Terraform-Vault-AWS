@@ -20,12 +20,19 @@ init:
   script:
     # - cd $TF_ROOT
     - terraform init
+  artifacts:
+    paths:
+      - .terraform/   # Persist Terraform working directory
+      - terraform.tfstate  # Save Terraform state
+      - *.tf   # Include Terraform configuration files
+    expire_in: 1h
 
 plan:
   stage: plan
   script:
-    # - cd $TF_ROOT
     - terraform plan
+  dependencies:
+    - init  # Ensures the `plan` stage depends on `init`
   only:
     - merge_requests
     - branches
@@ -33,8 +40,9 @@ plan:
 apply:
   stage: apply
   script:
-    # - cd $TF_ROOT
     - terraform apply -auto-approve
+  dependencies:
+    - plan  # Ensures `apply` gets files from `plan`
   only:
     - main
   when: manual
