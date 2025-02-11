@@ -27,11 +27,11 @@ init:
     - terraform init
   artifacts:
     paths:
-      - .terraform/   # Store Terraform working directory
-      - terraform.tfstate  # Save Terraform state
-      - terraform.tfstate.backup  # Include backup file
-      - "*.tf"  # Store Terraform configuration files
-      - "*.tfvars"  # Include variable files if any
+      - terraform/.terraform/   # Store Terraform working directory
+      - terraform/terraform.tfstate  # Save Terraform state
+      - terraform/terraform.tfstate.backup  # Include backup file
+      - "terraform/*.tf"  # Store Terraform configuration files
+      - "terraform/*.tfvars"  # Include variable files if any
     expire_in: 1h
 
 plan:
