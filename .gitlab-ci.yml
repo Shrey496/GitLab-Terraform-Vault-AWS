@@ -4,7 +4,7 @@ stages:
   - apply
 
 variables:
-  TF_ROOT: "/usr/local/bin/terraform"
+  TF_ROOT: "terraform"
 
 before_script:
   - apt-get update && apt-get install -y unzip
@@ -18,13 +18,13 @@ before_script:
 init:
   stage: init
   script:
-    - cd $TF_ROOT
+    # - cd $TF_ROOT
     - terraform init
 
 plan:
   stage: plan
   script:
-    - cd $TF_ROOT
+    # - cd $TF_ROOT
     - terraform plan
   only:
     - merge_requests
@@ -33,7 +33,7 @@ plan:
 apply:
   stage: apply
   script:
-    - cd $TF_ROOT
+    # - cd $TF_ROOT
     - terraform apply -auto-approve
   only:
     - main
