@@ -11,13 +11,13 @@ before_script:
   - rm -rf terraform/
   - curl -sSLO "https://releases.hashicorp.com/terraform/1.10.5/terraform_1.10.5_linux_amd64.zip"
   - unzip -oq terraform_1.10.5_linux_amd64.zip 
+  - mv terraform /usr/local/bin/
+  - chmod +x /usr/local/bin/terraform
+  - terraform --version
   - git reset --hard  # Ensure repo files are restored
   - git config --global --add safe.directory /builds/$CI_PROJECT_PATH
   - ls -la  # Debugging: Check if terraform/ exists
   - ls -R terraform  # Debugging: List all files inside terraform/
-  - mv terraform /usr/local/bin/
-  - chmod +x /usr/local/bin/terraform
-  - terraform --version
 
 init:
   stage: init
@@ -37,6 +37,7 @@ init:
 plan:
   stage: plan
   script:
+    - cd $TF_ROOT
     - ls -la
     - terraform plan
   dependencies:
@@ -48,6 +49,7 @@ plan:
 apply:
   stage: apply
   script:
+    - cd $TF_ROOT
     - ls -la
     - terraform apply -auto-approve
   dependencies:
