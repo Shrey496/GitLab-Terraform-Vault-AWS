@@ -18,18 +18,22 @@ before_script:
 init:
   stage: init
   script:
+    - ls -la
     #- cd $TF_ROOT
     - terraform init
   artifacts:
     paths:
-      - .terraform/   # Persist Terraform working directory
+      - .terraform/   # Store Terraform working directory
       - terraform.tfstate  # Save Terraform state
-      - "*.tf"   # Include Terraform configuration files
+      - terraform.tfstate.backup  # Include backup file
+      - "*.tf"  # Store Terraform configuration files
+      - "*.tfvars"  # Include variable files if any
     expire_in: 1h
 
 plan:
   stage: plan
   script:
+    - ls -la
     - terraform plan
   dependencies:
     - init  # Ensures the `plan` stage depends on `init`
@@ -40,6 +44,7 @@ plan:
 apply:
   stage: apply
   script:
+    - ls -la
     - terraform apply -auto-approve
   dependencies:
     - plan  # Ensures `apply` gets files from `plan`
