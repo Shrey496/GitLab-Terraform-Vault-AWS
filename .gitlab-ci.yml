@@ -57,6 +57,7 @@ apply:
   script:
     - cd $TF_ROOT
     - ls -la
+    - terraform init -reconfigure
     - terraform apply -auto-approve
   only:
     - main
