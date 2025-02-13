@@ -27,33 +27,36 @@ init:
     - terraform init
   artifacts:
     paths:
-      - terraform/.terraform/   # Store Terraform working directory
-      - terraform/terraform.tfstate  # Save Terraform state
-      - terraform/terraform.tfstate.backup  # Include backup file
-      - "terraform/*.tf"  # Store Terraform configuration files
-      - "terraform/*.tfvars"  # Include variable files if any
+      - terraform/.terraform/**  # Store Terraform working directory
+      - terraform/.terraform.lock.hcl
+      - terraform/terraform.tfstate
+      - terraform/terraform.tfstate.backup
+      - "terraform/*.tf"
+      - "terraform/*.tfvars"
     expire_in: 1h
 
 plan:
   stage: plan
+  dependencies:
+    - init  # Ensures the `plan` stage depends on `init`
   script:
     - cd $TF_ROOT
     - ls -la
     - terraform plan
-  dependencies:
-    - init  # Ensures the `plan` stage depends on `init`
-  only:
-    - merge_requests
-    - branches
+  artifacts:
+    paths:
+      - terraform/terraform.tfstate
+      - terraform/terraform.tfstate.backup
 
 apply:
   stage: apply
+  dependencies:
+    - init
+    - plan  # Ensures `apply` gets files from `plan`
   script:
     - cd $TF_ROOT
     - ls -la
     - terraform apply -auto-approve
-  dependencies:
-    - plan  # Ensures `apply` gets files from `plan`
   only:
     - main
   when: manual
