@@ -29,11 +29,15 @@ resource "aws_instance" "web" {
   key_name      = var.key_name
   security_groups = [aws_security_group.web_sg.name]
 
-  user_data = <<-EOF
+user_data = <<-EOF
               #!/bin/bash
-              sudo yum update -y
-              sudo yum install -y httpd
-              echo "<h1>Welcome to My Web Server</h1>" > /var/www/html/index.html
+              sudo yum clean all
+              sudo yum update -y || sleep 10 && sudo yum update -y
+              sudo yum install -y httpd || sleep 10 && sudo yum install -y httpd
+              
+              sudo mkdir -p /var/www/html
+              echo "<h1>Welcome to My Web Server</h1>" | sudo tee /var/www/html/index.html
+              
               sudo systemctl start httpd
               sudo systemctl enable httpd
               EOF
