@@ -42,6 +42,7 @@ plan:
   script:
     - cd $TF_ROOT
     - ls -la
+    - terraform init -reconfigure
     - terraform plan
   artifacts:
     paths:
