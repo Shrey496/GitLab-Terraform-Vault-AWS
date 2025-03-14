@@ -33,7 +33,6 @@ init:
       - terraform/terraform.tfstate.backup
       - "terraform/*.tf"
       - "terraform/*.tfvars"
-    expire_in: 1h
 
 plan:
   stage: plan
