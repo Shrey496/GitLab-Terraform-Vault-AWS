@@ -21,30 +21,30 @@ before_script:
   - chmod +x scripts/vault_aws_env.sh
 
 
-init:
-  stage: init
-  script:
-    - ls -la
-    - cd $TF_ROOT
-    - terraform init
-  artifacts:
-    paths:
-      - terraform/.terraform/**  # Store Terraform working directory
-      - terraform/.terraform.lock.hcl
-      - terraform/terraform.tfstate
-      - terraform/terraform.tfstate.backup
-      - "terraform/*.tf"
-      - "terraform/*.tfvars"
+# init:
+#   stage: init
+#   script:
+#     - ls -la
+#     - cd $TF_ROOT
+#     - terraform init
+#   artifacts:
+#     paths:
+#       - terraform/.terraform/**  # Store Terraform working directory
+#       - terraform/.terraform.lock.hcl
+#       - terraform/terraform.tfstate
+#       - terraform/terraform.tfstate.backup
+#       - "terraform/*.tf"
+#       - "terraform/*.tfvars"
 
 plan:
   stage: plan
-  dependencies:
-    - init  # Ensures the `plan` stage depends on `init`
+  # dependencies:
+  #   - init  # Ensures the `plan` stage depends on `init`
   script:
     - cd $TF_ROOT
     - ls -la
-    - terraform init -reconfigure
-    - terraform plan
+    - terraform init
+    - ../scripts/vault_aws_env.sh terraform plan
   artifacts:
     paths:
       - terraform/terraform.tfstate
