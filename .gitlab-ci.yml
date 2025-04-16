@@ -19,6 +19,7 @@ before_script:
   - ls -la  # Debugging: Check if terraform/ exists
   - ls -R terraform  # Debugging: List all files inside terraform
   - chmod +x scripts/vault_aws_env.sh
+  - env
 
 
 # init:
