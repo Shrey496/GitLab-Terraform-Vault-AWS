@@ -26,9 +26,7 @@ before_script:
     "$VAULT_ADDR/v1/auth/approle/login" | jq -r '.auth.client_token')
 
   # Fetch secrets from Vault KV v2 at path gitlab/ci-app
-  - VAULT_RESPONSE=$(curl --silent \
-    --header "X-Vault-Token: $VAULT_TOKEN" \
-    "$VAULT_ADDR/v1/gitlab/data/ci-app")
+  - VAULT_RESPONSE=$(curl --silent --header "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/gitlab/data/ci-app")
 
   # Parse and export secrets
   - export AWS_ACCESS_KEY_ID=$(echo "$VAULT_RESPONSE" | jq -r '.data.data.AWS_ACCESS_KEY_ID')
