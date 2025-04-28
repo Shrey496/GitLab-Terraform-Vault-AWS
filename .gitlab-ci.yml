@@ -72,3 +72,14 @@ apply:
   only:
     - main
   when: manual
+
+destroy:
+  stage: destroy
+
+  script:
+    - cd $TF_ROOT
+    - ls -la
+    - terraform init -reconfigure
+    - terraform plan -destroy -out=tfdestroy
+    - terraform apply -auto-approve tfdestroy
+  when: manual
