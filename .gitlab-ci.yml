@@ -81,6 +81,6 @@ destroy:
     - cd $TF_ROOT
     - ls -la
     - terraform init -reconfigure
-    - terraform plan -destroy -out=tfdestroy
-    - terraform apply -auto-approve tfdestroy
+    - terraform apply -auto-approve
+    - terraform destroy -auto-approve
   when: manual
