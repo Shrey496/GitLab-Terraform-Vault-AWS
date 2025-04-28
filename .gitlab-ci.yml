@@ -8,6 +8,7 @@ variables:
   TF_VAR_role_id: $VAULT_ROLE_ID
   TF_VAR_secret_id: $VAULT_SECRET_ID
   TF_VAR_address: $VAULT_SERVER_URL
+  VAULT_VERSION = 1.19.2
 
 before_script:
   - apt-get update && apt-get install -y unzip curl jq
@@ -17,12 +18,15 @@ before_script:
   - mv terraform /usr/local/bin/
   - chmod +x /usr/local/bin/terraform
   - terraform --version
+
+  - curl https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_386.zip --output vault.zip
+  - unzip vault.zip
+  - vault --version
+
   - git reset --hard  # Ensure repo files are restored
   - git config --global --add safe.directory /builds/$CI_PROJECT_PATH
   - ls -la  # Debugging: Check if terraform/ exists
   - ls -R terraform  # Debugging: List all files inside terraform
-  - chmod +x scripts/vault_aws_env.sh
-  - env
 
 
 # init:
