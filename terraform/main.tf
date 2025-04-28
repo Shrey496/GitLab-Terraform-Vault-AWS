@@ -1,7 +1,3 @@
-provider "aws" {
-  region = var.aws_region
-}
-
 provider "vault" {
 
   address = var.address
@@ -20,6 +16,12 @@ provider "vault" {
 data "vault_kv_secret_v2" "example" {
   mount = "secret"
   name  = "aws-secret"
+}
+
+provider "aws" {
+  region = var.aws_region
+  access_key = data.vault_kv_secret_v2.example.data["AWS_ACCESS_KEY_ID"]
+  secret_key = data.vault_kv_secret_v2.example.data["AWS_SECRET_ACCESS_KEY"]
 }
 
 module "web_server" {
