@@ -2,6 +2,7 @@ stages:
   - init
   - plan
   - apply
+  - destroy
 
 variables:
   TF_ROOT: "terraform"
