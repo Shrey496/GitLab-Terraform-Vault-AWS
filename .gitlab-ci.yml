@@ -53,6 +53,7 @@ plan:
     - cd $TF_ROOT
     - ls -la
     - terraform init
+    - terraform plan
   artifacts:
     paths:
       - terraform/terraform.tfstate
