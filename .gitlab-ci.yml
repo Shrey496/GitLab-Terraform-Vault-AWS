@@ -1,9 +1,9 @@
-# workflow:
-#   rules:
-#     - changes:
-#         - 'README.md'
-#       when: never
-#     - when: always
+workflow:
+  rules:
+    - changes:
+        - 'README.md'
+      when: never
+    - when: always
 
 stages:
   - init
