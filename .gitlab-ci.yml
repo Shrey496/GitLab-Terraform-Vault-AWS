@@ -18,8 +18,10 @@ before_script:
   - chmod +x /usr/local/bin/terraform
   - terraform --version
 
-  - curl https://releases.hashicorp.com/vault/1.19.2/vault_1.19.2_linux_386.zip --output vault.zip
-  - unzip vault.zip
+  - curl -sSLO "https://releases.hashicorp.com/vault/1.19.2/vault_1.19.2_linux_amd64.zip"
+  - unzip -o vault_1.19.2_linux_amd64.zip
+  - mv vault /usr/local/bin/
+  - chmod +x /usr/local/bin/vault
   - vault --version
 
   - git reset --hard  # Ensure repo files are restored
