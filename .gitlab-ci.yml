@@ -5,6 +5,9 @@ stages:
 
 variables:
   TF_ROOT: "terraform"
+  TF_VAR_role_id: $VAULT_ROLE_ID
+  TF_VAR_secret_id: $VAULT_SECRET_ID
+  TF_VAR_address: $VAULT_SERVER_URL
 
 before_script:
   - apt-get update && apt-get install -y unzip curl jq
