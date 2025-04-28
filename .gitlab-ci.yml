@@ -8,7 +8,6 @@ variables:
   TF_VAR_role_id: $VAULT_ROLE_ID
   TF_VAR_secret_id: $VAULT_SECRET_ID
   TF_VAR_address: $VAULT_SERVER_URL
-  VAULT_VERSION = 1.19.2
 
 before_script:
   - apt-get update && apt-get install -y unzip curl jq
@@ -19,7 +18,7 @@ before_script:
   - chmod +x /usr/local/bin/terraform
   - terraform --version
 
-  - curl https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_386.zip --output vault.zip
+  - curl https://releases.hashicorp.com/vault/1.19.2/vault_1.19.2_linux_386.zip --output vault.zip
   - unzip vault.zip
   - vault --version
 
