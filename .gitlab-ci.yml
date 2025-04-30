@@ -63,7 +63,7 @@ plan:
     - terraform plan -out=tfplan
   artifacts:
     paths:
-      - tfplan
+      - /terraform/tfplan
       # - terraform/terraform.tfstate
       # - terraform/terraform.tfstate.backup
 
