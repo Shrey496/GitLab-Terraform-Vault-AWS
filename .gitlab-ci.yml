@@ -6,10 +6,16 @@ workflow:
     - when: always
 
 stages:
-  - init
+  - validate
   - plan
   - apply
   - destroy
+
+# image:
+#   name: hashicorp/terraform:full
+#   entrypoint:
+#     - '/usr/bin/env'
+#   #  - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
 variables:
   TF_ROOT: "terraform"
@@ -19,75 +25,70 @@ variables:
 
 before_script:
   - apt-get update && apt-get install -y unzip curl jq
-  - rm -rf terraform/
+  # - rm -rf .terraform/
   - curl -sSLO "https://releases.hashicorp.com/terraform/1.10.5/terraform_1.10.5_linux_amd64.zip"
+  - rm -rf terraform 
   - unzip -oq terraform_1.10.5_linux_amd64.zip 
   - mv terraform /usr/local/bin/
   - chmod +x /usr/local/bin/terraform
   - terraform --version
-
+  
   - curl -sSLO "https://releases.hashicorp.com/vault/1.19.2/vault_1.19.2_linux_amd64.zip"
   - unzip -o vault_1.19.2_linux_amd64.zip
   - mv vault /usr/local/bin/
   - chmod +x /usr/local/bin/vault
   - vault --version
 
+
   - git reset --hard  # Ensure repo files are restored
   - git config --global --add safe.directory /builds/$CI_PROJECT_PATH
   - ls -la  # Debugging: Check if terraform/ exists
   - ls -R terraform  # Debugging: List all files inside terraform
+  - cd terraform
+  - terraform init
 
+ 
 
-# init:
-#   stage: init
-#   script:
-#     - ls -la
-#     - cd $TF_ROOT
-#     - terraform init
-#   artifacts:
-#     paths:
-#       - terraform/.terraform/**  # Store Terraform working directory
-#       - terraform/.terraform.lock.hcl
-#       - terraform/terraform.tfstate
-#       - terraform/terraform.tfstate.backup
-#       - "terraform/*.tf"
-#       - "terraform/*.tfvars"
+validate:
+  stage: validate
+  script:
+    - terraform validate
 
 plan:
   stage: plan
-  # dependencies:
-  #   - init  # Ensures the `plan` stage depends on `init`
   script:
-    - cd $TF_ROOT
-    - ls -la
+    # - cd $TF_ROOT
+    # - ls -la
     - terraform init
-    - terraform plan
+    - terraform plan -out=tfplan
   artifacts:
     paths:
-      - terraform/terraform.tfstate
-      - terraform/terraform.tfstate.backup
+      - tfplan
+      # - terraform/terraform.tfstate
+      # - terraform/terraform.tfstate.backup
 
 apply:
   stage: apply
-  # dependencies:
-  #   - init
-  #   - plan  # Ensures `apply` gets files from `plan`
+  dependencies:
+    - plan  # Ensures `apply` gets files from `plan`
   script:
-    - cd $TF_ROOT
-    - ls -la
-    - terraform init -reconfigure
-    - terraform apply -auto-approve
-  only:
-    - main
-  when: manual
+    # - cd $TF_ROOT
+    # - ls -la
+    # - terraform init -reconfigure
+    - terraform apply -auto-approve tfplan
+  # only:
+  #   - main
+  # when: manual
 
 destroy:
   stage: destroy
 
   script:
-    - cd $TF_ROOT
-    - ls -la
-    - terraform init -reconfigure
-    - terraform apply -auto-approve
+    # - cd $TF_ROOT
+    # - ls -la
+    - terraform init
+    # - terraform apply -auto-approve
     - terraform destroy -auto-approve
   when: manual
+  dependencies:
+    - apply
