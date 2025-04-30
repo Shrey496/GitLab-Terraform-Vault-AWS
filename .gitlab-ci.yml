@@ -15,7 +15,7 @@ stages:
 #   name: hashicorp/terraform:full
 #   entrypoint:
 #     - '/usr/bin/env'
-#     - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+#   #  - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
 variables:
   TF_ROOT: "terraform"
