@@ -44,7 +44,7 @@ before_script:
   - git config --global --add safe.directory /builds/$CI_PROJECT_PATH
   - ls -la  # Debugging: Check if terraform/ exists
   - ls -R terraform  # Debugging: List all files inside terraform
-  - cd $TF_ROOT
+  - cd terraform
   - terraform init
 
  
