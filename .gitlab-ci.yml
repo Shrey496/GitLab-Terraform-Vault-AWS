@@ -1,69 +1,91 @@
+workflow:
+  rules:
+    - changes:
+        - 'README.md'
+      when: never
+    - when: always
+
 stages:
-  - init
+  - validate
   - plan
   - apply
+  - destroy
+
+image:
+  name: hashicorp/terraform:light
+  entrypoint:
+    - '/usr/bin/env'
+    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
 variables:
-  TF_ROOT: "terraform"
+  # TF_ROOT: "terraform"
+  TF_VAR_role_id: $VAULT_ROLE_ID
+  TF_VAR_secret_id: $VAULT_SECRET_ID
+  TF_VAR_address: $VAULT_SERVER_URL
 
 before_script:
-  - apt-get update && apt-get install -y unzip curl jq
-  - rm -rf terraform/
-  - curl -sSLO "https://releases.hashicorp.com/terraform/1.10.5/terraform_1.10.5_linux_amd64.zip"
-  - unzip -oq terraform_1.10.5_linux_amd64.zip 
-  - mv terraform /usr/local/bin/
-  - chmod +x /usr/local/bin/terraform
+  - rm -rf .terraform
   - terraform --version
-  - git reset --hard  # Ensure repo files are restored
-  - git config --global --add safe.directory /builds/$CI_PROJECT_PATH
-  - ls -la  # Debugging: Check if terraform/ exists
-  - ls -R terraform  # Debugging: List all files inside terraform
-  - export VAULT_TOKEN=$(curl --silent --request POST --data "{\"role_id\":\"$VAULT_ROLE_ID\", \"secret_id\":\"$VAULT_SECRET_ID\"}" "$VAULT_ADDR/v1/auth/approle/login" | jq -r '.auth.client_token')
-  - "export VAULT_RESPONSE=$(curl --silent --header \"X-Vault-Token: $VAULT_TOKEN\" \"$VAULT_ADDR/v1/gitlab/data/ci-app\")"
-  - export AWS_ACCESS_KEY_ID=$(echo "$VAULT_RESPONSE" | jq -r '.data.data.AWS_ACCESS_KEY_ID')
-  - export AWS_SECRET_ACCESS_KEY=$(echo "$VAULT_RESPONSE" | jq -r '.data.data.AWS_SECRET_ACCESS_KEY')
+  - terraform init
+  # - apt-get update && apt-get install -y unzip curl jq
+  # - rm -rf terraform/
+  # - curl -sSLO "https://releases.hashicorp.com/terraform/1.10.5/terraform_1.10.5_linux_amd64.zip"
+  # - unzip -oq terraform_1.10.5_linux_amd64.zip 
+  # - mv terraform /usr/local/bin/
+  # - chmod +x /usr/local/bin/terraform
+  # - terraform --version
 
+  # - curl -sSLO "https://releases.hashicorp.com/vault/1.19.2/vault_1.19.2_linux_amd64.zip"
+  # - unzip -o vault_1.19.2_linux_amd64.zip
+  # - mv vault /usr/local/bin/
+  # - chmod +x /usr/local/bin/vault
+  # - vault --version
 
+  # - git reset --hard  # Ensure repo files are restored
+  # - git config --global --add safe.directory /builds/$CI_PROJECT_PATH
+  # - ls -la  # Debugging: Check if terraform/ exists
+  # - ls -R terraform  # Debugging: List all files inside terraform
 
-init:
-  stage: init
+validate:
+  stage: validate
   script:
-    - ls -la
-    - cd $TF_ROOT
-    - terraform init
-  artifacts:
-    paths:
-      - terraform/.terraform/**  # Store Terraform working directory
-      - terraform/.terraform.lock.hcl
-      - terraform/terraform.tfstate
-      - terraform/terraform.tfstate.backup
-      - "terraform/*.tf"
-      - "terraform/*.tfvars"
+    - terraform validate
 
 plan:
   stage: plan
-  dependencies:
-    - init  # Ensures the `plan` stage depends on `init`
   script:
-    - cd $TF_ROOT
-    - ls -la
-    - terraform init -reconfigure
-    - terraform plan
+    # - cd $TF_ROOT
+    # - ls -la
+    # - terraform init
+    - terraform plan -out=tfplan
   artifacts:
     paths:
-      - terraform/terraform.tfstate
-      - terraform/terraform.tfstate.backup
+      - tfplan
+      # - terraform/terraform.tfstate
+      # - terraform/terraform.tfstate.backup
 
 apply:
   stage: apply
-  dependencies:
-    - init
-    - plan  # Ensures `apply` gets files from `plan`
+    dependencies:
+      - plan  # Ensures `apply` gets files from `plan`
   script:
-    - cd $TF_ROOT
-    - ls -la
-    - terraform init -reconfigure
-    - terraform apply -auto-approve
-  only:
-    - main
+    # - cd $TF_ROOT
+    # - ls -la
+    # - terraform init -reconfigure
+    - terraform apply -auto-approve tfplan
+  # only:
+  #   - main
+  # when: manual
+
+destroy:
+  stage: destroy
+
+  script:
+    # - cd $TF_ROOT
+    # - ls -la
+    - terraform init
+    # - terraform apply -auto-approve
+    - terraform destroy -auto-approve
   when: manual
+  dependencies:
+    - apply
