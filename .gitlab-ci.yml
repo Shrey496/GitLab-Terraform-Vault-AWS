@@ -18,7 +18,7 @@ stages:
 #     - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
 variables:
-  # TF_ROOT: "terraform"
+  TF_ROOT: "terraform"
   TF_VAR_role_id: $VAULT_ROLE_ID
   TF_VAR_secret_id: $VAULT_SECRET_ID
   TF_VAR_address: $VAULT_SERVER_URL
@@ -44,6 +44,7 @@ before_script:
   - git config --global --add safe.directory /builds/$CI_PROJECT_PATH
   - ls -la  # Debugging: Check if terraform/ exists
   - ls -R terraform  # Debugging: List all files inside terraform
+  - cd $TF_ROOT
   - terraform init
 
  
