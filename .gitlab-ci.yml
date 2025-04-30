@@ -66,8 +66,8 @@ plan:
 
 apply:
   stage: apply
-    dependencies:
-      - plan  # Ensures `apply` gets files from `plan`
+  dependencies:
+    - plan  # Ensures `apply` gets files from `plan`
   script:
     # - cd $TF_ROOT
     # - ls -la
