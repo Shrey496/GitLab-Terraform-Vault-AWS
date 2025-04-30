@@ -59,7 +59,7 @@ plan:
   script:
     # - cd $TF_ROOT
     # - ls -la
-    # - terraform init
+    - terraform init
     - terraform plan -out=tfplan
   artifacts:
     paths:
