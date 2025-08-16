@@ -12,9 +12,11 @@ variable "address" {
 variable "role_id" {
   description = "Vault AppRole role_id"
   type        = string
+  sensitive   = true
 }
 
 variable "secret_id" {
   description = "Vault AppRole secret_id"
   type        = string
+  sensitive   = true
 }
