@@ -30,8 +30,3 @@ module "web_server" {
   instance_type = "t2.micro"
   key_name      = "shr-terra"
 }
-
-
-output "web_server_ip" {
-  value = module.web_server.instance_public_ip
-}
