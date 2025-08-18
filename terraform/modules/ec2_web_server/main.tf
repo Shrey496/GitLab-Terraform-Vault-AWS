@@ -46,7 +46,3 @@ user_data = <<-EOF
     Name = "WebServer"
   }
 }
-
-output "public_ip" {
-  value = aws_instance.web.public_ip
-}
